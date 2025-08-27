@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
@@ -8,14 +9,17 @@ import {
 import { doc, setDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
-  Button,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { auth, db } from '../context/firebase';
@@ -28,6 +32,7 @@ export default function LoginScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [rememberMe, setRememberMe] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -60,6 +65,8 @@ export default function LoginScreen() {
     }
 
     try {
+      setSubmitting(true);
+
       if (rememberMe) {
         await AsyncStorage.setItem('rememberedEmail', email);
       } else {
@@ -73,7 +80,6 @@ export default function LoginScreen() {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Firestore'a username ve birthdate ekle
         await setDoc(doc(db, 'users', user.uid), {
           username,
           birthdate,
@@ -85,107 +91,275 @@ export default function LoginScreen() {
       }
     } catch (error) {
       Alert.alert('Error', error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{isLogin ? 'Sign In' : 'Register'}</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* ÜST BAR (ForgotPassword ile aynı boşluk yapısı) */}
+        <View style={styles.header}>
+          {/* Login sayfası olduğundan geri butonu göstermiyoruz, boş bırakıyoruz */}
+        </View>
 
-      <TextInput
-        placeholder="E-mail"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        style={styles.input}
-      />
-
-      {!isLogin && (
-        <>
-          <TextInput
-            placeholder="Username"
-            value={username}
-            onChangeText={setUsername}
-            style={styles.input}
-          />
-
-          <Pressable onPress={() => setShowDatePicker(true)} style={styles.input}>
-            <Text style={{ color: birthdate ? '#000' : '#888' }}>
-              {birthdate || 'Select your birthdate'}
-            </Text>
-          </Pressable>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={birthdate ? new Date(birthdate) : new Date()}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={handleDateChange}
-              maximumDate={new Date()}
+        <View style={styles.content}>
+          <View style={styles.iconContainer}>
+            <Ionicons
+              name={isLogin ? 'log-in-outline' : 'person-add-outline'}
+              size={80}
+              color="#3498db"
             />
+          </View>
+
+          <Text style={styles.title}>{isLogin ? 'Welcome back!' : 'Create account'}</Text>
+
+          <Text style={styles.subtitle}>
+            {isLogin
+              ? "Enter your credentials to continue."
+              : "Fill the fields below to set up your account."}
+          </Text>
+
+          {/* E-MAIL */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Email Address</Text>
+            <TextInput
+              placeholder="Enter your email address"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              autoCorrect={false}
+              style={styles.input}
+              editable={!submitting}
+              placeholderTextColor="#95a5a6"
+            />
+          </View>
+
+          {/* REGISTER alanları */}
+          {!isLogin && (
+            <>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Username</Text>
+                <TextInput
+                  placeholder="Enter a username"
+                  value={username}
+                  onChangeText={setUsername}
+                  style={styles.input}
+                  editable={!submitting}
+                  placeholderTextColor="#95a5a6"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Birthdate</Text>
+                <Pressable
+                  onPress={() => !submitting && setShowDatePicker(true)}
+                  style={[styles.input, styles.dateInput]}
+                >
+                  <Text style={{ color: birthdate ? '#2c3e50' : '#7f8c8d' }}>
+                    {birthdate || 'Select your birthdate'}
+                  </Text>
+                  <Ionicons name="calendar-outline" size={20} color="#7f8c8d" />
+                </Pressable>
+
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={birthdate ? new Date(birthdate) : new Date()}
+                    mode="date"
+                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                    onChange={handleDateChange}
+                    maximumDate={new Date()}
+                  />
+                )}
+              </View>
+            </>
           )}
-        </>
-      )}
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
+          {/* PASSWORD */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              style={styles.input}
+              editable={!submitting}
+              placeholderTextColor="#95a5a6"
+            />
+          </View>
 
-      <Button title={isLogin ? 'Sign In' : 'Register'} onPress={handleAuth} />
+          {/* REMEMBER ME */}
+          <View style={styles.switchRow}>
+            <Switch value={rememberMe} onValueChange={setRememberMe} disabled={submitting} />
+            <Text style={styles.switchLabel}>Remember me</Text>
+          </View>
 
-      <View style={styles.switchContainer}>
-        <Switch value={rememberMe} onValueChange={setRememberMe} />
-        <Text style={styles.switchLabel}>Remember me</Text>
-      </View>
+          {/* PRIMARY BUTTON (ForgotPassword resetButton ile aynı görsel) */}
+          <TouchableOpacity
+            style={[styles.primaryButton, submitting && styles.primaryButtonDisabled]}
+            onPress={handleAuth}
+            disabled={submitting}
+            activeOpacity={0.85}
+          >
+            {submitting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Ionicons
+                name={isLogin ? 'log-in-outline' : 'person-add-outline'}
+                size={20}
+                color="#fff"
+              />
+            )}
+            <Text style={styles.primaryButtonText}>
+              {submitting ? (isLogin ? 'Signing in...' : 'Registering...') : isLogin ? 'Sign In' : 'Register'}
+            </Text>
+          </TouchableOpacity>
 
-      <Text style={styles.toggle} onPress={() => setIsLogin(!isLogin)}>
-        {isLogin
-          ? 'Don’t have an account? Register'
-          : 'Already have an account? Sign in'}
-      </Text>
+          {/* ALT LİNKLER */}
+          <TouchableOpacity
+            style={styles.backToLoginButton}
+            onPress={() => !submitting && setIsLogin(!isLogin)}
+            disabled={submitting}
+          >
+            <Text style={styles.backToLoginText}>
+              {isLogin
+                ? 'Don’t have an account? Register'
+                : 'Already have an account? Sign in'}
+            </Text>
+          </TouchableOpacity>
 
-      <Text style={styles.forgot} onPress={() => router.push('/forgot-password')}>
-        🔑 Forgot password
-      </Text>
-    </View>
+          <TouchableOpacity
+            style={styles.backToLoginButton}
+            onPress={() => !submitting && router.push('/forgot-password')}
+            disabled={submitting}
+          >
+            <Text style={styles.backToLoginText}>🔑 Forgot password</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
+/* === STYLES: ForgotPasswordScreen ile birebir uyum === */
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa', // aynı
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 24, // kırpma önleyici alt boşluk
+  },
+  header: {
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  content: {
+    paddingHorizontal: 30,
+    paddingBottom: 40,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32, // fazladan boşluk, kırpmayı engeller
+  },
+
+  // INPUT BLOKLARI (aynı görsel)
+  inputContainer: {
+    marginBottom: 18,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2c3e50',
+    marginBottom: 8,
+  },
   input: {
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#ecf0f1',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
     backgroundColor: '#fff',
+    color: '#2c3e50',
   },
-  title: { fontSize: 24, textAlign: 'center', marginBottom: 20 },
-  toggle: {
-    color: 'blue',
-    marginTop: 15,
-    textAlign: 'center',
-    fontSize: 14,
-  },
-  forgot: {
-    color: 'blue',
-    marginTop: 10,
-    textAlign: 'center',
-    fontSize: 13,
-  },
-  switchContainer: {
+  dateInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
-    marginTop: 10,
+    justifyContent: 'space-between',
+  },
+
+  // REMEMBER
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 20,
+    paddingHorizontal: 4,
   },
   switchLabel: {
     marginLeft: 10,
     fontSize: 14,
+    color: '#2c3e50',
+  },
+
+  // PRIMARY BUTTON (Forgot’daki resetButton’la aynı)
+  primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3498db',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  primaryButtonDisabled: {
+    backgroundColor: '#bdc3c7',
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+
+  // ALT LİNKLER (Forgot’un backToLoginButton stili)
+  backToLoginButton: {
+    alignItems: 'center',
+    padding: 16,
+  },
+  backToLoginText: {
+    color: '#7f8c8d',
+    fontSize: 16,
+    textDecorationLine: 'underline',
   },
 });
