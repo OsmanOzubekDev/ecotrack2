@@ -47,12 +47,13 @@ export const ACHIEVEMENTS = {
   GREEN_PIONEER: {
     id: 'green_pioneer',
     title: 'Green Pioneer',
-    description: 'Achieve 3 scores below 4.0 kg CO2',
-    icon: '🚀',
+    description: 'Achieve 2 weekly averages below 50 kg CO2',
+    icon: '👣',
     type: 'carbon_score',
-    target: 3,
-    threshold: 4.0,
-    category: 'carbon'
+    target: 2,
+    threshold: 50.0,
+    category: 'carbon',
+    period: 'weekly'
   },
   
   // Easier achievements for better engagement

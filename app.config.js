@@ -26,7 +26,14 @@ export default {
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID || "your_app_id",
     },
     plugins: [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/icon.png",
+          color: "#4CAF50"
+        }
+      ]
     ]
   }
 };

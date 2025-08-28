@@ -1,14 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { useAuth } from '../../context/AuthProvider';
 import { getRawCarbonScores } from '../../src/api/carbon';
@@ -406,18 +406,6 @@ export default function SuggestionsScreen() {
           </View>
         )}
       </View>
-
-      {/* Action Button */}
-      <TouchableOpacity 
-        style={styles.actionButton}
-        onPress={() => {
-          // Navigate to carbon calculator
-          // You can implement navigation here
-        }}
-      >
-        <Ionicons name="calculator-outline" size={20} color="#fff" />
-        <Text style={styles.actionButtonText}>Update Carbon Footprint</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -597,25 +585,5 @@ const styles = StyleSheet.create({
     color: '#bdc3c7',
     textAlign: 'center',
     lineHeight: 20,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#2ecc71',
-    margin: 20,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
   },
 });

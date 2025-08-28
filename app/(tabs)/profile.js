@@ -22,6 +22,7 @@ export default function ProfileScreen() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareData, setShareData] = useState(null);
   const viewShotRef = useRef(null);
+  const [achievementsKey, setAchievementsKey] = useState(0); // State to force AchievementsDisplay remount
 
   const fetchProfile = async () => {
     if (!user?.uid) return;
@@ -101,11 +102,6 @@ export default function ProfileScreen() {
     content += `🏆 Achievements:\n`;
     content += `• ${shareData.weeklyStats.achievementsUnlocked}/${shareData.weeklyStats.totalAchievements} unlocked\n`;
     
-    if (shareData.achievements.length > 0) {
-      const recentAchievements = shareData.achievements.slice(0, 3);
-      content += `• Recent: ${recentAchievements.map(a => a.title).join(', ')}\n`;
-    }
-    
     content += `\n#EcoTrack #Sustainability #CarbonFootprint #ClimateAction`;
     
     try {
@@ -153,9 +149,25 @@ export default function ProfileScreen() {
     }
   };
 
+  const refreshAchievementsOnFocus = async () => {
+    if (!user?.uid) return;
+    
+    try {
+      // Force a fresh fetch of achievements data
+      await checkAchievementProgress(user.uid);
+      // Increment key to force AchievementsDisplay to remount
+      setAchievementsKey(prev => prev + 1);
+      console.log('Achievements refreshed on profile focus, new key:', achievementsKey + 1);
+    } catch (error) {
+      console.error('Error refreshing achievements:', error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchProfile();
+      // Refresh achievements when profile page comes into focus
+      refreshAchievementsOnFocus();
     }, [user?.uid])
   );
 
@@ -181,33 +193,22 @@ export default function ProfileScreen() {
       />
 
       {/* Social Media Share Button */}
-      <View style={styles.shareSection}>
-        <TouchableOpacity 
-          style={styles.shareButton}
-          onPress={handleShareProgress}
-          disabled={isGeneratingShare}
-        >
-          <Ionicons 
-            name="share-social" 
-            size={24} 
-            color="#fff" 
-            style={styles.shareIcon}
-          />
-          <Text style={styles.shareButtonText}>
-            {isGeneratingShare ? 'Generating...' : 'Share Progress on Social Media'}
-          </Text>
-          {isGeneratingShare && (
-            <ActivityIndicator size="small" color="#fff" style={styles.shareLoader} />
-          )}
-        </TouchableOpacity>
-        <Text style={styles.shareDescription}>
-          Download a shareable image with your weekly carbon footprint progress and achievements
+      <TouchableOpacity 
+        style={styles.shareButton}
+        onPress={handleShareProgress}
+        disabled={isGeneratingShare}
+      >
+        <Text style={styles.shareButtonText}>
+          {isGeneratingShare ? 'Generating...' : 'Share'}
         </Text>
-      </View>
+        {isGeneratingShare && (
+          <ActivityIndicator size="small" color="#fff" style={styles.shareLoader} />
+        )}
+      </TouchableOpacity>
 
       <Text style={[styles.title, { marginTop: 30 }]}>🏆 Achievements</Text>
       
-      <AchievementsDisplay />
+      <AchievementsDisplay key={achievementsKey} />
 
       {/* Share Modal */}
       <Modal
@@ -231,7 +232,6 @@ export default function ProfileScreen() {
             {shareData && (
               <ShareableProgressImage 
                 weeklyStats={shareData.weeklyStats}
-                achievements={shareData.achievements}
                 username={username}
                 ref={viewShotRef}
               />
@@ -248,7 +248,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.actionButton, styles.shareButton]}
+              style={[styles.actionButton, styles.downloadButton]}
               onPress={handleShareImage}
             >
               <Ionicons name="download" size={20} color="#fff" />
@@ -308,27 +308,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  shareSection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
   shareButton: {
     backgroundColor: '#2e86de',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 12,
     alignItems: 'center',
-  },
-  shareIcon: {
-    marginRight: 10,
-    color: '#fff',
+    marginBottom: 20,
   },
   shareButtonText: {
     color: '#fff',
@@ -337,13 +323,6 @@ const styles = StyleSheet.create({
   },
   shareLoader: {
     marginLeft: 10,
-    color: '#fff',
-  },
-  shareDescription: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 20,
-    textAlign: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -405,7 +384,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-  shareButton: {
+  downloadButton: {
     backgroundColor: '#3B82F6',
     flex: 1,
     marginLeft: 10,

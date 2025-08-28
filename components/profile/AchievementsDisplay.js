@@ -3,11 +3,24 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { useAuth } from '../../context/AuthProvider';
 import { checkAchievementProgress } from '../../src/api/achievements';
 
-export default function AchievementsDisplay() {
+export default function AchievementsDisplay({ refreshKey = 0 }) {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const fetchAchievements = async () => {
+    try {
+      setLoading(true);
+      const progressData = await checkAchievementProgress(user.uid);
+      setAchievements(progressData);
+      console.log('Achievements fetched:', progressData.length);
+    } catch (error) {
+      console.error('Error fetching achievements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (user?.uid) {
@@ -15,17 +28,13 @@ export default function AchievementsDisplay() {
     }
   }, [user?.uid]);
 
-  const fetchAchievements = async () => {
-    try {
-      setLoading(true);
-      const progressData = await checkAchievementProgress(user.uid);
-      setAchievements(progressData);
-    } catch (error) {
-      console.error('Error fetching achievements:', error);
-    } finally {
-      setLoading(false);
+  // Refresh achievements when refreshKey changes (triggered from parent)
+  useEffect(() => {
+    if (user?.uid && refreshKey > 0) {
+      console.log('Achievements refresh triggered by key change:', refreshKey);
+      fetchAchievements();
     }
-  };
+  }, [refreshKey, user?.uid]);
 
   const categories = [
     { id: 'all', name: 'All', icon: '🏆' },

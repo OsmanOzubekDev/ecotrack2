@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
 const CARD_HEIGHT = 600;
 
-const ShareableProgressImage = forwardRef(({ weeklyStats, achievements, username }, ref) => {
+const ShareableProgressImage = forwardRef(({ weeklyStats, username }, ref) => {
   const displayName = username || 'EcoTracker';
   
   return (
@@ -63,17 +63,6 @@ const ShareableProgressImage = forwardRef(({ weeklyStats, achievements, username
             </Text>
             <Text style={styles.achievementLabel}>Unlocked</Text>
           </View>
-          
-          {achievements.length > 0 && (
-            <View style={styles.recentAchievements}>
-              <Text style={styles.recentTitle}>Recent:</Text>
-              {achievements.slice(0, 3).map((achievement, index) => (
-                <Text key={index} style={styles.achievementItem}>
-                  • {achievement.title}
-                </Text>
-              ))}
-            </View>
-          )}
         </View>
 
         {/* Footer */}
@@ -181,24 +170,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#e8f5e8',
     fontWeight: '500',
-  },
-  recentAchievements: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 15,
-    padding: 15,
-  },
-  recentTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  achievementItem: {
-    fontSize: 14,
-    color: '#e8f5e8',
-    marginBottom: 5,
-    textAlign: 'center',
   },
   footer: {
     alignItems: 'center',

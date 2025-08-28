@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet } from 'react-native';
 import CarbonHistoryGraph from '../../components/dashboard/CarbonHistoryGraph';
 import CarbonQuickAccess from '../../components/dashboard/CarbonQuickAccess';
+import NotificationTest from '../../components/dashboard/NotificationTest';
 import RecentScores from '../../components/dashboard/RecentScores';
 import UserGreeting from '../../components/dashboard/UserGreeting';
 
@@ -11,6 +12,7 @@ export default function HomeScreen() {
       <CarbonQuickAccess />
       <CarbonHistoryGraph />
       <RecentScores />
+      <NotificationTest />
     </ScrollView>
   );
 }

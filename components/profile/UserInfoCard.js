@@ -120,8 +120,8 @@ export default function UserInfoCard({ username, email, birthdate, onUsernameUpd
       ) : (
         <View style={styles.infoContainer}>
           <Text style={styles.email}>{email}</Text>
-          <Text style={[styles.birthdate, { fontWeight: 'bold', color: '#4CAF50' }]}>
-            🎂 Birthdate: {birthdate || 'Not set'}
+          <Text style={styles.birthdate}>
+            Birthdate: {birthdate || 'Not set'}
           </Text>
         </View>
       )}

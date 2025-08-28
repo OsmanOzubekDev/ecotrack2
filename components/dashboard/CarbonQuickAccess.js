@@ -105,7 +105,7 @@ export default function CarbonQuickAccess() {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.cardText}>🚀 Welcome to EcoTrack!</Text>
+      <Text style={styles.cardText}>👣 Welcome to EcoTrack!</Text>
       
       {loading ? (
         <View style={styles.scoreContainer}>
