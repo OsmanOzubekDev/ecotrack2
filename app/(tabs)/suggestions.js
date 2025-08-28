@@ -78,7 +78,7 @@ export default function SuggestionsScreen() {
         title: 'Switch to LED Bulbs',
         description: 'Replace traditional bulbs with LED equivalents to reduce electricity consumption by up to 80%.',
         impact: 'High',
-        estimatedReduction: '2-4 kg CO₂e/week',
+        estimatedReduction: '8-15 kg CO₂e/week',
         icon: 'bulb-outline',
         priority: 1
       });
@@ -91,7 +91,7 @@ export default function SuggestionsScreen() {
         title: 'Optimize Heating',
         description: 'Lower your thermostat by 1-2°C and use a programmable thermostat to save on gas heating.',
         impact: 'Medium',
-        estimatedReduction: '1-2 kg CO₂e/week',
+        estimatedReduction: '5-12 kg CO₂e/week',
         icon: 'thermometer-outline',
         priority: 2
       });
@@ -105,7 +105,7 @@ export default function SuggestionsScreen() {
         title: 'Carpool or Use Public Transport',
         description: 'Share rides or switch to public transport for 2-3 days per week to significantly reduce car emissions.',
         impact: 'High',
-        estimatedReduction: '5-10 kg CO₂e/week',
+        estimatedReduction: '25-45 kg CO₂e/week',
         icon: 'car-outline',
         priority: 1
       });
@@ -118,7 +118,7 @@ export default function SuggestionsScreen() {
         title: 'Consider Alternative Travel',
         description: 'For short trips, consider train or bus instead of flights. Each avoided flight saves significant emissions.',
         impact: 'Very High',
-        estimatedReduction: '10-20 kg CO₂e/week',
+        estimatedReduction: '50-100 kg CO₂e/week',
         icon: 'airplane-outline',
         priority: 1
       });
@@ -132,7 +132,7 @@ export default function SuggestionsScreen() {
         title: 'Reduce Red Meat Consumption',
         description: 'Try meatless Mondays or substitute red meat with poultry/fish 2-3 times per week.',
         impact: 'High',
-        estimatedReduction: '3-6 kg CO₂e/week',
+        estimatedReduction: '15-30 kg CO₂e/week',
         icon: 'restaurant-outline',
         priority: 2
       });
@@ -145,7 +145,7 @@ export default function SuggestionsScreen() {
         title: 'Choose Plant-Based Alternatives',
         description: 'Try oat milk, almond milk, or other plant-based dairy alternatives for some meals.',
         impact: 'Medium',
-        estimatedReduction: '1-2 kg CO₂e/week',
+        estimatedReduction: '8-15 kg CO₂e/week',
         icon: 'leaf-outline',
         priority: 3
       });
@@ -159,7 +159,7 @@ export default function SuggestionsScreen() {
         title: 'Buy Second-Hand or Sustainable',
         description: 'Consider second-hand clothing or sustainable brands. Each avoided new item saves resources.',
         impact: 'Medium',
-        estimatedReduction: '1-2 kg CO₂e/week',
+        estimatedReduction: '5-12 kg CO₂e/week',
         icon: 'shirt-outline',
         priority: 3
       });
@@ -173,7 +173,7 @@ export default function SuggestionsScreen() {
         title: 'Start Recycling',
         description: 'Set up a recycling system at home. Separate paper, plastic, glass, and metal waste.',
         impact: 'Medium',
-        estimatedReduction: '1-2 kg CO₂e/week',
+        estimatedReduction: '8-18 kg CO₂e/week',
         icon: 'reload-outline',
         priority: 2
       });
@@ -186,7 +186,7 @@ export default function SuggestionsScreen() {
         title: 'Start Composting',
         description: 'Compost food scraps to reduce methane emissions from landfills and create nutrient-rich soil.',
         impact: 'Medium',
-        estimatedReduction: '2-3 kg CO₂e/week',
+        estimatedReduction: '12-25 kg CO₂e/week',
         icon: 'leaf-outline',
         priority: 2
       });
@@ -200,7 +200,7 @@ export default function SuggestionsScreen() {
         title: 'Audit Your Daily Habits',
         description: 'Your carbon footprint is above average. Consider a comprehensive lifestyle audit to identify major emission sources.',
         impact: 'Very High',
-        estimatedReduction: '10-20 kg CO₂e/week',
+        estimatedReduction: '40-80 kg CO₂e/week',
         icon: 'analytics-outline',
         priority: 1
       });
